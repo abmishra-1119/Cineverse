@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../features/Auth/userSlice";
 import { FaUserCircle, FaMoon, FaSun, FaFilm, FaTv } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import logo from '../assets/logo.png';
 
 const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -58,7 +59,7 @@ const Navbar = () => {
                     className="flex items-center space-x-3"
                 >
                     <img
-                        src="/logo.png"
+                        src={logo}
                         className="h-10 object-cover"
                         alt="CineVerse Logo"
                     />
