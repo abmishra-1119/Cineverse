@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     fetchFavourite,
@@ -23,6 +23,8 @@ const Profile = () => {
     const { favourite, watchnext, lastviewed } = useSelector((state) => state.profile);
     const { user } = useSelector((state) => state.users);
 
+    const [loadingId, setLoadingId] = useState(null);
+
     const fetchData = useCallback(
         async (id) => {
             try {
@@ -36,20 +38,22 @@ const Profile = () => {
         [dispatch]
     );
 
-    const removeFav = (id, idx) => {
-        dispatch(removeFavourite({ id, idx }));
-        toast.info("Removed from Favourites");
+    const handleRemove = async (action, id, idx, message) => {
+        setLoadingId(id);
+        try {
+            await dispatch(action({ id, idx })).unwrap?.();
+            toast.info(message);
+        } catch (err) {
+            console.error("remove error:", err);
+            toast.error("Failed to remove item");
+        } finally {
+            setLoadingId(null);
+        }
     };
 
-    const removeNext = (id, idx) => {
-        dispatch(removeWatchnext({ id, idx }));
-        toast.info("Removed from Watch Next");
-    };
-
-    const removelast = (id, idx) => {
-        dispatch(removeLastviewed({ id, idx }));
-        toast.info("Removed from Last Viewed");
-    };
+    const removeFav = (id, idx) => handleRemove(removeFavourite, id, idx, "Removed from Favourites");
+    const removeNext = (id, idx) => handleRemove(removeWatchnext, id, idx, "Removed from Watch Next");
+    const removelast = (id, idx) => handleRemove(removeLastviewed, id, idx, "Removed from Last Viewed");
 
     useEffect(() => {
         window.scrollTo({ top: 0 });
@@ -113,8 +117,13 @@ const Profile = () => {
                                         <button
                                             className="cursor-pointer"
                                             onClick={() => removeFav(fav?.id, originalIdx)}
+                                            disabled={loadingId === fav?.id}
                                         >
-                                            Remove
+                                            {loadingId === fav?.id ? (
+                                                <span className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></span>
+                                            ) : (
+                                                "Remove"
+                                            )}
                                         </button>
                                     </div>
                                     <MovieCard {...fav?.movie} />
@@ -180,8 +189,13 @@ const Profile = () => {
                                         <button
                                             className="cursor-pointer"
                                             onClick={() => removeNext(fav?.id, originalIdx)}
+                                            disabled={loadingId === fav?.id}
                                         >
-                                            Remove
+                                            {loadingId === fav?.id ? (
+                                                <span className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></span>
+                                            ) : (
+                                                "Remove"
+                                            )}
                                         </button>
                                     </div>
                                     <MovieCard {...fav?.movie} />
@@ -248,8 +262,13 @@ const Profile = () => {
                                         <button
                                             className="cursor-pointer"
                                             onClick={() => removelast(fav?.id, originalIdx)}
+                                            disabled={loadingId === fav?.id}
                                         >
-                                            Remove
+                                            {loadingId === fav?.id ? (
+                                                <span className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></span>
+                                            ) : (
+                                                "Remove"
+                                            )}
                                         </button>
                                     </div>
                                     <MovieCard {...fav?.movie} />

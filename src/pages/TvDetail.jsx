@@ -22,6 +22,8 @@ const TvDetail = () => {
 
     const [isFav, setIsFav] = useState(false);
     const [isNext, setIsNext] = useState(false);
+    const [favLoading, setFavLoading] = useState(false);
+    const [nextLoading, setNextLoading] = useState(false);
 
     useEffect(() => {
         dispatch(fetchTVSeriesById(id));
@@ -40,22 +42,45 @@ const TvDetail = () => {
             setIsNext(watchnext.some((next) => next.movie.id === +id));
         }
     }, [favourite, watchnext, id, user?.id]);
-    // console.log(currentTVSeries);
 
     const addToFav = async () => {
-        const { id, vote_average, poster_path, name, first_air_date } = currentTVSeries
         if (!user) return toast.error("Please login to add to favourites");
-        await dispatch(addFavourite({ userId: user.id, movie: { id, vote_average, poster_path, name, first_air_date } }));
-        setIsFav(true);
-        toast.success(`${currentTVSeries?.name} added to favourites`);
+        setFavLoading(true);
+        const { id, vote_average, poster_path, name, first_air_date } = currentTVSeries;
+        try {
+            await dispatch(
+                addFavourite({
+                    userId: user.id,
+                    movie: { id, vote_average, poster_path, name, first_air_date },
+                })
+            ).unwrap();
+            setIsFav(true);
+            toast.success(`${currentTVSeries?.name} added to favourites`);
+        } catch (error) {
+            toast.error("Failed to add to favourites");
+        } finally {
+            setFavLoading(false);
+        }
     };
 
     const addToNext = async () => {
-        const { id, vote_average, poster_path, name, first_air_date } = currentTVSeries
         if (!user) return toast.error("Please login to add to watch next");
-        await dispatch(addWatchnext({ userId: user.id, movie: { id, vote_average, poster_path, name, first_air_date } }));
-        setIsNext(true);
-        toast.success(`${currentTVSeries?.name} added to Watch Next`);
+        setNextLoading(true);
+        const { id, vote_average, poster_path, name, first_air_date } = currentTVSeries;
+        try {
+            await dispatch(
+                addWatchnext({
+                    userId: user.id,
+                    movie: { id, vote_average, poster_path, name, first_air_date },
+                })
+            ).unwrap();
+            setIsNext(true);
+            toast.success(`${currentTVSeries?.name} added to Watch Next`);
+        } catch (error) {
+            toast.error("Failed to add to Watch Next");
+        } finally {
+            setNextLoading(false);
+        }
     };
 
     return (
@@ -121,7 +146,8 @@ const TvDetail = () => {
                                 </p>
                             </div>
 
-                            <div className="flex items-center gap-4">
+                            {/* Buttons with Loading States */}
+                            <div className="flex items-center gap-4 flex-wrap">
                                 {isFav ? (
                                     <button
                                         disabled
@@ -133,10 +159,17 @@ const TvDetail = () => {
                                 ) : (
                                     <button
                                         onClick={addToFav}
-                                        className="flex items-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2.5"
+                                        disabled={favLoading}
+                                        className="flex items-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2.5 disabled:opacity-70"
                                     >
-                                        <FaRegHeart />
-                                        <span>Add to Favourite</span>
+                                        {favLoading ? (
+                                            <span className="animate-spin border-2 border-t-transparent border-white rounded-full w-4 h-4"></span>
+                                        ) : (
+                                            <FaRegHeart />
+                                        )}
+                                        <span>
+                                            {favLoading ? "Adding..." : "Add to Favourite"}
+                                        </span>
                                     </button>
                                 )}
 
@@ -151,10 +184,17 @@ const TvDetail = () => {
                                 ) : (
                                     <button
                                         onClick={addToNext}
-                                        className="flex items-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2.5"
+                                        disabled={nextLoading}
+                                        className="flex items-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2.5 disabled:opacity-70"
                                     >
-                                        <FaPlusCircle />
-                                        <span>Add to Watch Next</span>
+                                        {nextLoading ? (
+                                            <span className="animate-spin border-2 border-t-transparent border-white rounded-full w-4 h-4"></span>
+                                        ) : (
+                                            <FaPlusCircle />
+                                        )}
+                                        <span>
+                                            {nextLoading ? "Adding..." : "Add to Watch Next"}
+                                        </span>
                                     </button>
                                 )}
                             </div>

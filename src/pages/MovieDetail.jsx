@@ -20,20 +20,22 @@ const MovieDetail = () => {
     const { currentMovie, isLoading } = useSelector((state) => state.movies);
     const { favourite, watchnext } = useSelector((state) => state.profile);
     const { user } = useSelector((state) => state.users);
+
     const [isFav, setIsFav] = useState(false);
     const [isNext, setIsNext] = useState(false);
+    const [favLoading, setFavLoading] = useState(false);
+    const [nextLoading, setNextLoading] = useState(false);
 
     useEffect(() => {
         dispatch(fetchMovieById(id));
         if (user?.id) {
             dispatch(fetchFavourite(user.id));
             dispatch(fetchWatchnext(user.id));
-            dispatch(fetchLastViewed(user.id))
+            dispatch(fetchLastViewed(user.id));
         }
     }, [dispatch, id, user?.id]);
 
     useEffect(() => {
-
         window.scrollTo({ top: 0 });
         if (user?.id && favourite) {
             setIsFav(favourite.some((fav) => fav.movie.id === +id));
@@ -45,25 +47,54 @@ const MovieDetail = () => {
 
     useEffect(() => {
         if (currentMovie && user) {
-            const { id, title, poster_path, release_date, vote_average } = currentMovie
-            dispatch(addLastViewed({ userId: user.id, movie: { id, title, poster_path, release_date, vote_average } }))
+            const { id, title, poster_path, release_date, vote_average } = currentMovie;
+            dispatch(
+                addLastViewed({
+                    userId: user.id,
+                    movie: { id, title, poster_path, release_date, vote_average },
+                })
+            );
         }
-    }, [currentMovie])
-    const addToFav = async () => {
-        const { id, title, poster_path, release_date, vote_average } = currentMovie
+    }, [currentMovie]);
 
+    const addToFav = async () => {
         if (!user) return toast.error("Please login to add to favourites");
-        await dispatch(addFavourite({ userId: user.id, movie: { id, title, poster_path, release_date, vote_average } }));
-        setIsFav(true);
-        toast.success(`${currentMovie?.title} added to favourites`);
+        setFavLoading(true);
+        const { id, title, poster_path, release_date, vote_average } = currentMovie;
+        try {
+            await dispatch(
+                addFavourite({
+                    userId: user.id,
+                    movie: { id, title, poster_path, release_date, vote_average },
+                })
+            ).unwrap();
+            setIsFav(true);
+            toast.success(`${currentMovie?.title} added to favourites`);
+        } catch (error) {
+            toast.error("Failed to add to favourites");
+        } finally {
+            setFavLoading(false);
+        }
     };
 
     const addToNext = async () => {
-        const { id, title, poster_path, release_date, vote_average } = currentMovie
         if (!user) return toast.error("Please login to add to watch next");
-        await dispatch(addWatchnext({ userId: user.id, movie: { id, title, poster_path, release_date, vote_average } }));
-        setIsNext(true);
-        toast.success(`${currentMovie?.title} added to Watch Next`);
+        setNextLoading(true);
+        const { id, title, poster_path, release_date, vote_average } = currentMovie;
+        try {
+            await dispatch(
+                addWatchnext({
+                    userId: user.id,
+                    movie: { id, title, poster_path, release_date, vote_average },
+                })
+            ).unwrap();
+            setIsNext(true);
+            toast.success(`${currentMovie?.title} added to Watch Next`);
+        } catch (error) {
+            toast.error("Failed to add to Watch Next");
+        } finally {
+            setNextLoading(false);
+        }
     };
 
     return (
@@ -128,7 +159,7 @@ const MovieDetail = () => {
                                 </p>
                             </div>
 
-                            {/* Buttons with Icons */}
+                            {/* Buttons with Loading */}
                             <div className="flex items-center gap-4 flex-wrap">
                                 {isFav ? (
                                     <button
@@ -141,10 +172,17 @@ const MovieDetail = () => {
                                 ) : (
                                     <button
                                         onClick={addToFav}
-                                        className="flex items-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2.5"
+                                        disabled={favLoading}
+                                        className="flex items-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2.5 disabled:opacity-70"
                                     >
-                                        <FaRegHeart />
-                                        <span>Add to Favourite</span>
+                                        {favLoading ? (
+                                            <span className="animate-spin border-2 border-t-transparent border-white rounded-full w-4 h-4"></span>
+                                        ) : (
+                                            <FaRegHeart />
+                                        )}
+                                        <span>
+                                            {favLoading ? "Adding..." : "Add to Favourite"}
+                                        </span>
                                     </button>
                                 )}
 
@@ -159,10 +197,17 @@ const MovieDetail = () => {
                                 ) : (
                                     <button
                                         onClick={addToNext}
-                                        className="flex items-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2.5"
+                                        disabled={nextLoading}
+                                        className="flex items-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2.5 disabled:opacity-70"
                                     >
-                                        <FaPlusCircle />
-                                        <span>Add to Watch Next</span>
+                                        {nextLoading ? (
+                                            <span className="animate-spin border-2 border-t-transparent border-white rounded-full w-4 h-4"></span>
+                                        ) : (
+                                            <FaPlusCircle />
+                                        )}
+                                        <span>
+                                            {nextLoading ? "Adding..." : "Add to Watch Next"}
+                                        </span>
                                     </button>
                                 )}
                             </div>
