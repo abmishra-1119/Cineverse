@@ -56,6 +56,9 @@ const userSlice = createSlice({
         logout: (state) => {
             state.user = null
             localStorage.removeItem('user')
+            localStorage.removeItem('mywatch')
+            localStorage.removeItem('myfav')
+            localStorage.removeItem('myviewed')
         }
     },
     extraReducers: (builder) => {

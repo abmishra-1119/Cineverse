@@ -145,6 +145,7 @@ const profileSlice = createSlice({
             }).addCase(removeFavourite.fulfilled, (state, action) => {
                 state.isLoading = false
                 state.favourite.splice(action.payload, 1)
+                localStorage.setItem("myfav", JSON.stringify(state.favourite))
                 state.message = ''
             }).addCase(removeFavourite.rejected, (state, action) => {
                 state.message = action.payload
@@ -175,6 +176,7 @@ const profileSlice = createSlice({
             }).addCase(removeWatchnext.fulfilled, (state, action) => {
                 state.isLoading = false
                 state.watchnext.splice(action.payload, 1)
+                localStorage.setItem("mywatch", JSON.stringify(state.watchnext))
                 state.message = ''
             }).addCase(removeWatchnext.rejected, (state, action) => {
                 state.message = action.payload
@@ -205,6 +207,8 @@ const profileSlice = createSlice({
             }).addCase(removeLastviewed.fulfilled, (state, action) => {
                 state.isLoading = false
                 state.lastviewed.splice(action.payload, 1)
+                localStorage.setItem("myviewed", JSON.stringify(state.lastviewed))
+                console.log(state.lastviewed);
                 state.message = ''
             }).addCase(removeLastviewed.rejected, (state, action) => {
                 state.message = action.payload
@@ -214,7 +218,7 @@ const profileSlice = createSlice({
             }).addCase(addLastViewed.fulfilled, (state, action) => {
                 state.isLoading = false
                 state.lastviewed.push(action.payload)
-                localStorage.setItem("myviewes", JSON.stringify(state.lastviewed))
+                localStorage.setItem("myviewed", JSON.stringify(state.lastviewed))
                 state.message = ''
             }).addCase(addLastViewed.rejected, (state, action) => {
                 state.isLoading = false
