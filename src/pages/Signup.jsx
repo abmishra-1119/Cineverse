@@ -55,9 +55,9 @@ const SignUp = () => {
 
             <form
                 onSubmit={onSubmit}
-                className="relative z-10 w-full max-w-md p-8 rounded-xl shadow-xl bg-gray-800 dark:bg-gray-900 border border-gray-700 dark:border-gray-600 transition-colors"
+                className="relative z-10 w-full max-w-md p-8 rounded-xl shadow-xl bg-gray-100 dark:bg-gray-900 border border-gray-700 dark:border-gray-600 transition-colors"
             >
-                <h2 className="text-2xl font-bold text-white mb-6 text-center">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 text-center">
                     Create Account
                 </h2>
 
@@ -113,7 +113,7 @@ const SignUp = () => {
                     {isLoading ? "Creating Account..." : "Create Account"}
                 </button>
 
-                <p className="mt-4 text-center text-sm text-gray-200 dark:text-gray-300">
+                <p className="mt-4 text-center text-sm text-gray-800 dark:text-gray-300">
                     Already have an account?{" "}
                     <Link
                         to="/login"
