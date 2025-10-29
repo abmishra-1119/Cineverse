@@ -19,7 +19,7 @@ function App() {
 
   return (
     <>
-      <BrowserRouter basename='/Cineverse/'>
+      <BrowserRouter basename='/Cineverse'>
         <Navbar />
         <ToastContainer
           position="top-right"
