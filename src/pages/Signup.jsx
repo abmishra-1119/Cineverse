@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import { registerUser } from "../features/Auth/userSlice";
 import InputField from "../components/InputField";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -29,7 +30,7 @@ const SignUp = () => {
             try {
                 const result = await dispatch(registerUser(formData));
                 if (registerUser.fulfilled.match(result)) {
-                    alert("Registration successful!");
+                    toast.success("Registration successful!");
                     navigate("/");
                 }
             } catch (error) {

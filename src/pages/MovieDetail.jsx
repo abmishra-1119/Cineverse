@@ -13,6 +13,8 @@ import {
 import Loading from "../components/Loading";
 import { toast } from "react-toastify";
 import { FaHeart, FaRegHeart, FaPlusCircle, FaClock } from "react-icons/fa";
+import NotFound from '../assets/NotFound.png'
+
 
 const MovieDetail = () => {
     const { id } = useParams();
@@ -110,7 +112,7 @@ const MovieDetail = () => {
                                 src={
                                     currentMovie?.poster_path
                                         ? `https://image.tmdb.org/t/p/w500${currentMovie?.poster_path}`
-                                        : "/NotFound.png"
+                                        : NotFound
                                 }
                                 alt={currentMovie?.title}
                                 className="w-full h-full object-cover"

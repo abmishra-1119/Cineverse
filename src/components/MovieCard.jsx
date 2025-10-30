@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
+import NotFound from '../assets/NotFound.png'
 
 const MovieCard = ({ id, title, name, poster_path, release_date, first_air_date, vote_average, media_type }) => {
     const formatRating = (rating) => (rating ? rating.toFixed(1) : "NR");
@@ -31,7 +32,7 @@ const MovieCard = ({ id, title, name, poster_path, release_date, first_air_date,
                         src={
                             poster_path
                                 ? `https://image.tmdb.org/t/p/w500${poster_path}`
-                                : "/NotFound.png"
+                                : NotFound
                         }
                         alt={finalTitle}
                         className="

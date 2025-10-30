@@ -47,6 +47,7 @@ const Movies = () => {
     const prevPage = () => page > 1 && setPage((prev) => prev - 1);
 
     const handleFilter = (type) => {
+        setSelectedGenre(null)
         setFilterType(type);
         setDropdownOpen(false);
         setPage(1);

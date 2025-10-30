@@ -11,6 +11,7 @@ import { fetchTVSeriesById } from "../features/Movies/movieSlice";
 import Loading from "../components/Loading";
 import { toast } from "react-toastify";
 import { FaHeart, FaPlusCircle, FaRegHeart, FaClock } from "react-icons/fa";
+import NotFound from '../assets/NotFound.png'
 
 const TvDetail = () => {
     const { id } = useParams();
@@ -95,7 +96,7 @@ const TvDetail = () => {
                                 src={
                                     currentTVSeries?.poster_path
                                         ? `https://image.tmdb.org/t/p/w500${currentTVSeries?.poster_path}`
-                                        : "/NotFound.png"
+                                        : NotFound
                                 }
                                 alt={currentTVSeries?.name}
                                 className="w-full h-full object-cover"
