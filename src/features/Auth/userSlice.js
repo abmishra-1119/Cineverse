@@ -37,9 +37,9 @@ export const registerUser = createAsyncThunk('user/registerUser', async(form, { 
             return rejectWithValue('User Already Registered')
         } else {
             const { confirmPassword, ...singlePass } = form
-            await axios.post(base_url, singlePass)
-            localStorage.setItem("user", JSON.stringify(singlePass))
-            return singlePass
+            const res = await axios.post(base_url, singlePass)
+            localStorage.setItem("user", JSON.stringify(res.data))
+            return res.data
         }
     } catch (er) {
         return rejectWithValue('Register Failed')
